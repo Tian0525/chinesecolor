@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国传统色 · Chinese Traditional Colors</title>
+<style>
+  :root {
+    --paper: #f5f0e6;
+    --paper-deep: #ece4d3;
+    --ink: #2b2723;
+    --ink-soft: #6b625a;
+    --accent: #c3272b;   /* 朱红/绛 */
+    --card-radius: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB", sans-serif;
+    color: var(--ink);
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(rgba(120, 100, 70, 0.04) 1px, transparent 1px);
+    background-size: 22px 22px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- 头部 ---------- */
+  header {
+    text-align: center;
+    padding: 64px 20px 28px;
+    position: relative;
+  }
+
+  .seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px; height: 46px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 7px;
+    font-family: "KaiTi", "STKaiti", "Noto Serif SC", serif;
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1;
+    transform: rotate(-5deg);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.28), 0 3px 8px rgba(195, 39, 43, 0.25);
+    margin-bottom: 22px;
+  }
+
+  h1 {
+    font-family: "KaiTi", "STKaiti", "Noto Serif SC", "SimSun", serif;
+    font-size: clamp(40px, 7vw, 64px);
+    font-weight: 400;
+    letter-spacing: 8px;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    margin-top: 12px;
+    color: var(--ink-soft);
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+
+  .subtitle .en {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    letter-spacing: 1px;
+  }
+
+  .rule {
+    width: 120px; height: 2px;
+    margin: 26px auto 0;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* ---------- 工具条 ---------- */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(245, 240, 230, 0.86);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(120, 100, 70, 0.12);
+    padding: 14px 20px;
+  }
+
+  .toolbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid rgba(120, 100, 70, 0.18);
+    border-radius: 999px;
+    padding: 9px 16px;
+    max-width: 460px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(195, 39, 43, 0.10);
+  }
+  .search-box svg { flex: none; color: var(--ink-soft); }
+  .search-box input {
+    flex: 1; border: none; outline: none;
+    background: transparent;
+    font-size: 15px; color: var(--ink);
+  }
+  .search-box input::placeholder { color: #b3a998; }
+
+  .count {
+    margin-left: auto;
+    color: var(--ink-soft);
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .count b { color: var(--accent); font-weight: 700; }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .tab {
+    font-size: 14px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(120, 100, 70, 0.22);
+    background: transparent;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 1px;
+  }
+  .tab:hover { border-color: var(--accent); color: var(--accent); }
+  .tab.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ---------- 色卡网格 ---------- */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 26px 20px 60px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--card-radius);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(60, 45, 25, 0.08);
+    transition: transform .18s ease, box-shadow .18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(60, 45, 25, 0.16);
+  }
+
+  .card::after { /* 底部轻微压暗，保证文字可读 */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.22) 100%);
+    pointer-events: none;
+  }
+
+  .card .txt { position: relative; z-index: 2; pointer-events: none; }
+
+  .card .name {
+    font-family: "KaiTi", "STKaiti", "Noto Serif SC", serif;
+    font-size: 26px;
+    line-height: 1.1;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.25);
+  }
+  .card .pinyin {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+  .card .hex {
+    font-family: "JetBrains Mono", "SF Mono", Consolas, monospace;
+    font-size: 12px;
+    opacity: 0.9;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .card .info-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    z-index: 3;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(4px);
+    color: inherit;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .15s, background .15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card:hover .info-btn { opacity: 1; }
+  .card .info-btn:hover { background: rgba(255, 255, 255, 0.5); }
+  .card .info-btn.dark { color: #1a1a1a; background: rgba(0,0,0,0.12); }
+  .card .info-btn.dark:hover { background: rgba(0,0,0,0.2); }
+
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--ink-soft);
+    padding: 80px 0;
+    font-size: 15px;
+    letter-spacing: 2px;
+  }
+
+  /* ---------- 页脚 ---------- */
+  footer {
+    text-align: center;
+    padding: 40px 20px 56px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.9;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- 提示 Toast ---------- */
+  #toast {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 999px;
+    font-size: 14px;
+    letter-spacing: 1px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    z-index: 100;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast .swatch {
+    width: 16px; height: 16px; border-radius: 4px;
+    flex: none; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4);
+  }
+
+  /* ---------- 详情弹窗 ---------- */
+  #overlay {
+    position: fixed; inset: 0;
+    background: rgba(30, 25, 20, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 90;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #overlay.show { opacity: 1; pointer-events: auto; }
+
+  #modal {
+    background: #fff;
+    border-radius: 20px;
+    max-width: 520px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+    transform: translateY(12px) scale(.97);
+    transition: transform .2s;
+  }
+  #overlay.show #modal { transform: translateY(0) scale(1); }
+
+  .modal-preview {
+    height: 210px;
+    display: flex; align-items: flex-end;
+    padding: 22px;
+    position: relative;
+  }
+  .modal-preview .close {
+    position: absolute; top: 14px; right: 14px;
+    width: 32px; height: 32px; border-radius: 50%;
+    border: none; cursor: pointer;
+    background: rgba(255,255,255,0.3);
+    backdrop-filter: blur(4px);
+    font-size: 18px; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-preview .close:hover { background: rgba(255,255,255,0.55); }
+
+  .modal-title .m-name {
+    font-family: "KaiTi", "STKaiti", "Noto Serif SC", serif;
+    font-size: 40px; line-height: 1;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  }
+  .modal-title .m-pinyin { font-size: 15px; opacity: 0.9; margin-top: 8px; letter-spacing: 2px; }
+
+  .modal-body { padding: 20px 22px 24px; }
+
+  .value-row {
+    display: flex; align-items: center;
+    padding: 11px 4px;
+    border-bottom: 1px solid rgba(120, 100, 70, 0.10);
+  }
+  .value-row:last-child { border-bottom: none; }
+  .value-row .label {
+    width: 62px; flex: none;
+    font-size: 13px; color: var(--ink-soft); letter-spacing: 2px;
+    font-weight: 600;
+  }
+  .value-row .val {
+    flex: 1;
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 14px;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+  .value-row .copy-btn {
+    border: 1px solid rgba(120, 100, 70, 0.25);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all .15s;
+  }
+  .value-row .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 10px; }
+    .card .name { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="seal">色</div>
+  <h1>中国传统色</h1>
+  <p class="subtitle"><span class="en">Chinese Traditional Colors</span> · 拾取属于东方的色彩</p>
+  <div class="rule"></div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="search-row">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.5" y2="16.5"></line>
+        </svg>
+        <input id="search" type="text" placeholder="搜索色名 / 拼音 / 色值，如：胭脂、yan、9D2933">
+      </div>
+      <div class="count">共 <b id="total-count">0</b> 色</div>
+    </div>
+    <div class="tabs" id="tabs"></div>
+  </div>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  点击色卡即可复制 HEX 色值 · 点击右上角 ⓘ 查看详情<br>
+  色值参考《中国传统色：故宫里的色彩美学》及中国色标准色卡
+</footer>
+
+<div id="toast">
+  <span class="swatch" id="toast-swatch"></span>
+  <span id="toast-text"></span>
+</div>
+
+<div id="overlay">
+  <div id="modal">
+    <div class="modal-preview" id="modal-preview">
+      <button class="close" id="modal-close">✕</button>
+      <div class="modal-title">
+        <div class="m-name" id="m-name"></div>
+        <div class="m-pinyin" id="m-pinyin"></div>
+      </div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+/* ============ 数据 ============ */
+// [色名, 拼音, HEX, 分类]
+const CATEGORIES = [
+  { key: 'all',    label: '全部' },
+  { key: 'red',    label: '红'   },
+  { key: 'orange', label: '橙黄' },
+  { key: 'green',  label: '绿'   },
+  { key: 'blue',   label: '青蓝' },
+  { key: 'purple', label: '紫'   },
+  { key: 'brown',  label: '褐'   },
+  { key: 'neutral',label: '黑白' },
+];
+
+const COLORS = [
+  // —— 红 ——
+  ['粉红', 'Fěnhóng', '#FFB3A7', 'red'],
+  ['妃色', 'Fēisè', '#ED5736', 'red'],
+  ['品红', 'Pǐnhóng', '#F00056', 'red'],
+  ['桃红', 'Táohóng', '#F47983', 'red'],
+  ['海棠红', 'Hǎitánghóng', '#DB5A6B', 'red'],
+  ['石榴红', 'Shíliúhóng', '#F20C00', 'red'],
+  ['樱桃色', 'Yīngtáosè', '#C93756', 'red'],
+  ['银红', 'Yínhóng', '#F05654', 'red'],
+  ['大红', 'Dàhóng', '#FF2121', 'red'],
+  ['绯红', 'Fēihóng', '#C83C23', 'red'],
+  ['胭脂', 'Yānzhī', '#9D2933', 'red'],
+  ['朱红', 'Zhūhóng', '#FF4C00', 'red'],
+  ['彤', 'Tóng', '#F35336', 'red'],
+  ['茜色', 'Qiànsè', '#B13546', 'red'],
+  ['火红', 'Huǒhóng', '#FF2D51', 'red'],
+  ['赫赤', 'Hèchì', '#C91F37', 'red'],
+  ['嫣红', 'Yānhóng', '#EF7A82', 'red'],
+  ['洋红', 'Yánghóng', '#FF0097', 'red'],
+  ['枣红', 'Zǎohóng', '#C32136', 'red'],
+  ['殷红', 'Yānhóng', '#BE002F', 'red'],
+  ['砖红', 'Zhuānhóng', '#C3272B', 'red'],
+  ['珊瑚红', 'Shānhúhóng', '#F0A1A8', 'red'],
+
+  // —— 橙黄 ——
+  ['杏红', 'Xìnghóng', '#FF8C31', 'orange'],
+  ['橙', 'Chéng', '#FF7500', 'orange'],
+  ['姜黄', 'Jiānghuáng', '#FFC773', 'orange'],
+  ['杏黄', 'Xìnghuáng', '#FFA631', 'orange'],
+  ['橙黄', 'Chénghuáng', '#FFA400', 'orange'],
+  ['琥珀', 'Hǔpò', '#CA6924', 'orange'],
+  ['鹅黄', 'Éhuáng', '#FFF143', 'orange'],
+  ['缃色', 'Xiāngsè', '#F0C239', 'orange'],
+  ['秋香色', 'Qiūxiāngsè', '#D9B611', 'orange'],
+  ['金黄', 'Jīnhuáng', '#F0A500', 'orange'],
+  ['米黄', 'Mǐhuáng', '#F0D6B1', 'orange'],
+  ['藤黄', 'Ténghuáng', '#FFB61E', 'orange'],
+  ['铬黄', 'Gèhuáng', '#E6B800', 'orange'],
+  ['蜜合', 'Mìhé', '#F0B06F', 'orange'],
+  ['蜜蜡', 'Mìlà', '#D9A35C', 'orange'],
+
+  // —— 绿 ——
+  ['竹青', 'Zhúqīng', '#789262', 'green'],
+  ['豆绿', 'Dòulǜ', '#9ED048', 'green'],
+  ['嫩绿', 'Nènlǜ', '#BDDD22', 'green'],
+  ['柳绿', 'Liǔlǜ', '#AFDD22', 'green'],
+  ['松花绿', 'Sōnghuālǜ', '#BCE672', 'green'],
+  ['葱绿', 'Cōnglǜ', '#9ED900', 'green'],
+  ['油绿', 'Yóulǜ', '#00BC12', 'green'],
+  ['碧色', 'Bìsè', '#2ADD9C', 'green'],
+  ['翡翠', 'Fěicuì', '#3DE1AD', 'green'],
+  ['青碧', 'Qīngbì', '#48C0A3', 'green'],
+  ['铜绿', 'Tónglǜ', '#549688', 'green'],
+  ['蟹壳青', 'Xièkéqīng', '#A5A29B', 'green'],
+  ['鸭卵青', 'Yāluǎnqīng', '#E0EEE8', 'green'],
+  ['荷茎绿', 'Héjīnglǜ', '#BACD9B', 'green'],
+  ['石绿', 'Shílǜ', '#16A951', 'green'],
+  ['孔雀绿', 'Kǒngquèlǜ', '#00A0A0', 'green'],
+
+  // —— 青蓝 ——
+  ['藏青', 'Zàngqīng', '#2E4E7E', 'blue'],
+  ['黛蓝', 'Dàilán', '#425066', 'blue'],
+  ['靛蓝', 'Diànlán', '#065279', 'blue'],
+  ['靛青', 'Diànqīng', '#177CB0', 'blue'],
+  ['宝蓝', 'Bǎolán', '#4B5CC4', 'blue'],
+  ['群青', 'Qúnqīng', '#4C8DAE', 'blue'],
+  ['天青', 'Tiānqīng', '#10AEC2', 'blue'],
+  ['天蓝', 'Tiānlán', '#0F59A4', 'blue'],
+  ['蔚蓝', 'Wèilán', '#70F3FF', 'blue'],
+  ['湖蓝', 'Húlán', '#30DFF3', 'blue'],
+  ['花青', 'Huāqīng', '#003371', 'blue'],
+  ['石青', 'Shíqīng', '#1685A9', 'blue'],
+  ['佛青', 'Fóqīng', '#003C7E', 'blue'],
+  ['绀青', 'Gànqīng', '#003371', 'blue'],
+  ['竹月', 'Zhúyuè', '#7F9FA6', 'blue'],
+  ['月白', 'Yuèbái', '#D6ECF0', 'blue'],
+  ['青白', 'Qīngbái', '#C0EBD7', 'blue'],
+
+  // —— 紫 ——
+  ['紫', 'Zǐ', '#8D4BBB', 'purple'],
+  ['葡萄紫', 'Pútáozǐ', '#4C1F24', 'purple'],
+  ['酱紫', 'Jiàngzǐ', '#815476', 'purple'],
+  ['青莲', 'Qīnglián', '#801DAE', 'purple'],
+  ['丁香色', 'Dīngxiāngsè', '#CCA4E3', 'purple'],
+  ['藕荷色', 'Ǒuhésè', '#E4C6D0', 'purple'],
+  ['藕色', 'Ǒusè', '#EDD1D8', 'purple'],
+  ['绛紫', 'Jiàngzǐ', '#8C4356', 'purple'],
+
+  // —— 褐 ——
+  ['茶色', 'Chásè', '#B35C44', 'brown'],
+  ['栗色', 'Lìsè', '#60281E', 'brown'],
+  ['褐色', 'Hèsè', '#6E511E', 'brown'],
+  ['驼色', 'Tuósè', '#A88462', 'brown'],
+  ['檀色', 'Tánsè', '#B36D61', 'brown'],
+  ['赭色', 'Zhěsè', '#955539', 'brown'],
+  ['棕', 'Zōng', '#B25D25', 'brown'],
+
+  // —— 黑白 ——
+  ['漆黑', 'Qīhēi', '#161823', 'neutral'],
+  ['乌黑', 'Wūhēi', '#392F41', 'neutral'],
+  ['墨色', 'Mòsè', '#50616D', 'neutral'],
+  ['皂色', 'Zàosè', '#25273B', 'neutral'],
+  ['黛色', 'Dàisè', '#4A4266', 'neutral'],
+  ['玄色', 'Xuánsè', '#3D3B4F', 'neutral'],
+  ['苍色', 'Cāngsè', '#75878A', 'neutral'],
+  ['雪白', 'Xuěbái', '#F0FCFF', 'neutral'],
+  ['霜白', 'Shuāngbái', '#E9F1F6', 'neutral'],
+  ['象牙白', 'Xiàngyábái', '#FFFBF0', 'neutral'],
+  ['茶白', 'Chábái', '#F3F9F1', 'neutral'],
+  ['乳白', 'Rǔbái', '#F9F4DC', 'neutral'],
+  ['素色', 'Sùsè', '#E0F0E9', 'neutral'],
+];
+
+const colors = COLORS.map(([name, pinyin, hex, cat]) => ({ name, pinyin, hex, cat }));
+
+/* ============ 工具函数 ============ */
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function rgbToHex(r, g, b) {
+  return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+}
+
+function rgbToCmyk(r, g, b) {
+  const r1 = r / 255, g1 = g / 255, b1 = b / 255;
+  const k = 1 - Math.max(r1, g1, b1);
+  if (k === 1) return [0, 0, 0, 100];
+  const c = Math.round(((1 - r1 - k) / (1 - k)) * 100);
+  const m = Math.round(((1 - g1 - k) / (1 - k)) * 100);
+  const y = Math.round(((1 - b1 - k) / (1 - k)) * 100);
+  return [c, m, y, Math.round(k * 100)];
+}
+
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+    h *= 60;
+  }
+  return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
+}
+
+function luminance(hex) {
+  const [r, g, b] = hexToRgb(hex).map(v => v / 255);
+  const L = c => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  return 0.2126 * L(r) + 0.7152 * L(g) + 0.0722 * L(b);
+}
+
+function isDark(hex) { return luminance(hex) < 0.5; }
+
+function copyText(text) {
+  return new Promise(resolve => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => resolve(true)).catch(() => resolve(fallbackCopy(text)));
+    } else {
+      resolve(fallbackCopy(text));
+    }
+  });
+}
+function fallbackCopy(text) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  } catch (e) { return false; }
+}
+
+/* ============ 状态 ============ */
+let activeCat = 'all';
+let query = '';
+
+/* ============ 渲染 ============ */
+const grid = document.getElementById('grid');
+const tabsEl = document.getElementById('tabs');
+const totalEl = document.getElementById('total-count');
+
+function renderTabs() {
+  tabsEl.innerHTML = '';
+  CATEGORIES.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'tab' + (c.key === activeCat ? ' active' : '');
+    b.textContent = c.label;
+    b.onclick = () => { activeCat = c.key; renderTabs(); renderGrid(); };
+    tabsEl.appendChild(b);
+  });
+}
+
+function renderGrid() {
+  const q = query.trim().toLowerCase();
+  const list = colors.filter(c => {
+    const okCat = activeCat === 'all' || c.cat === activeCat;
+    const okQ = !q ||
+      c.name.toLowerCase().includes(q) ||
+      c.pinyin.toLowerCase().includes(q) ||
+      c.hex.toLowerCase().includes(q) ||
+      c.hex.slice(1).toLowerCase().includes(q);
+    return okCat && okQ;
+  });
+
+  grid.innerHTML = '';
+  if (!list.length) {
+    grid.innerHTML = '<div class="empty">未找到匹配的颜色，换个词试试</div>';
+  }
+
+  list.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.background = c.hex;
+    const dark = isDark(c.hex);
+    const txt = dark ? '#ffffff' : '#1a1712';
+    card.style.color = txt;
+
+    card.innerHTML = `
+      <button class="info-btn${dark ? '' : ' dark'}" title="查看详情">ⓘ</button>
+      <div class="txt">
+        <div class="name">${c.name}</div>
+        <div class="pinyin">${c.pinyin}</div>
+        <div class="hex">${c.hex.toUpperCase()}</div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => copyHex(c));
+    card.querySelector('.info-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openModal(c);
+    });
+
+    grid.appendChild(card);
+  });
+
+  totalEl.textContent = list.length;
+}
+
+/* ============ 复制 ============ */
+let toastTimer;
+function showToast(hex, name) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-swatch').style.background = hex;
+  document.getElementById('toast-text').textContent = `已复制：${name} ${hex.toUpperCase()}`;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+
+async function copyHex(c) {
+  const ok = await copyText(c.hex.toUpperCase());
+  if (ok) showToast(c.hex, c.name);
+}
+
+/* ============ 详情弹窗 ============ */
+const overlay = document.getElementById('overlay');
+
+function openModal(c) {
+  const [r, g, b] = hexToRgb(c.hex);
+  const [cc, m, y, k] = rgbToCmyk(r, g, b);
+  const [h, s, l] = rgbToHsl(r, g, b);
+  const dark = isDark(c.hex);
+  const txt = dark ? '#ffffff' : '#1a1712';
+
+  const preview = document.getElementById('modal-preview');
+  preview.style.background = c.hex;
+  preview.style.color = txt;
+
+  document.getElementById('m-name').textContent = c.name;
+  document.getElementById('m-pinyin').textContent = c.pinyin;
+
+  const rows = [
+    { label: 'HEX', val: c.hex.toUpperCase() },
+    { label: 'RGB', val: `rgb(${r}, ${g}, ${b})` },
+    { label: 'CMYK', val: `${cc}%, ${m}%, ${y}%, ${k}%` },
+    { label: 'HSL', val: `hsl(${h}, ${s}%, ${l}%)` },
+  ];
+
+  const body = document.getElementById('modal-body');
+  body.innerHTML = '';
+  rows.forEach(row => {
+    const div = document.createElement('div');
+    div.className = 'value-row';
+    div.innerHTML = `
+      <span class="label">${row.label}</span>
+      <span class="val">${row.val}</span>
+      <button class="copy-btn">复制</button>
+    `;
+    div.querySelector('.copy-btn').onclick = async (e) => {
+      await copyText(row.val);
+      e.target.textContent = '已复制';
+      setTimeout(() => { e.target.textContent = '复制'; }, 1200);
+    };
+    body.appendChild(div);
+  });
+
+  overlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal-close').onclick = closeModal;
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+/* ============ 搜索 ============ */
+document.getElementById('search').addEventListener('input', (e) => {
+  query = e.target.value;
+  renderGrid();
+});
+
+/* ============ 初始化 ============ */
+renderTabs();
+renderGrid();
+</script>
+</body>
+</html>
