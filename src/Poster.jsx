@@ -4,7 +4,6 @@ import { chartGroup } from './StarChart'
 
 // 分享海报 —— 极简宋风。整幅为自包含 SVG，便于直接导出 PNG。
 const W = 750
-const H = 1000
 const PAPER = '#F8F6F0'
 const INK = '#2C2C2C'
 const MUTED = '#8A8274'
@@ -31,6 +30,18 @@ const Poster = React.forwardRef(function Poster({ colors = [] }, ref) {
   const swGap = 18
   const swTotal = swatches.length * swW + (swatches.length - 1) * swGap
   const swStart = (W - swTotal) / 2
+
+  // 动态纵向布局：自述行数决定下方各段位置与整幅高度
+  const selfTitleY = 740
+  const linesStartY = 776
+  const lineH = 30
+  const linesEndY = linesStartY + (lines.length - 1) * lineH
+  const swatchTitleY = linesEndY + 42
+  const swatchCircleY = swatchTitleY + 34
+  const swatchNameY = swatchCircleY + 36
+  const ruleY = swatchNameY + 28
+  const footerY = ruleY + 24
+  const H = footerY + 28
 
   const today = new Date()
   const dateStr = `${today.getFullYear()} 年 ${today.getMonth() + 1} 月 ${today.getDate()} 日`
@@ -74,30 +85,30 @@ const Poster = React.forwardRef(function Poster({ colors = [] }, ref) {
       </g>
 
       {/* 个人自述 */}
-      <text x={cx} y={740} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 16, fill: INK, letterSpacing: 2 }}>我的五行自述</text>
+      <text x={cx} y={selfTitleY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 16, fill: INK, letterSpacing: 2 }}>我的五行自述</text>
       {lines.map((ln, i) => (
-        <text key={i} x={cx} y={776 + i * 30} textAnchor="middle"
+        <text key={i} x={cx} y={linesStartY + i * lineH} textAnchor="middle"
           style={{ fontFamily: FONT, fontSize: 14, fill: '#4A443C', lineHeight: 1 }}>{ln}</text>
       ))}
 
       {/* 已拾色样 */}
-      <text x={cx} y={864} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 15, fill: INK, letterSpacing: 2 }}>拾得之色</text>
+      <text x={cx} y={swatchTitleY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 15, fill: INK, letterSpacing: 2 }}>拾得之色</text>
       <g>
         {swatches.map((name, i) => {
           const c = colors.find((cc) => cc.name === name)
           const x = swStart + i * (swW + swGap) + swW / 2
           return (
             <g key={name}>
-              <circle cx={x} cy={898} r={20} fill={c.hex} stroke="#fff" strokeWidth={1.5} />
-              <text x={x} y={934} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 13, fill: '#4A443C' }}>{name}</text>
+              <circle cx={x} cy={swatchCircleY} r={20} fill={c.hex} stroke="#fff" strokeWidth={1.5} />
+              <text x={x} y={swatchNameY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 13, fill: '#4A443C' }}>{name}</text>
             </g>
           )
         })}
       </g>
 
       {/* 底部 */}
-      <line x1={cx - 110} y1={956} x2={cx + 110} y2={956} className="p-rule" />
-      <text x={cx} y={980} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 12, fill: MUTED, letterSpacing: 2 }}>广州艺博院 · 五色展 · {dateStr}</text>
+      <line x1={cx - 110} y1={ruleY} x2={cx + 110} y2={ruleY} className="p-rule" />
+      <text x={cx} y={footerY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 12, fill: MUTED, letterSpacing: 2 }}>广州艺博院 · 五色展 · {dateStr}</text>
     </svg>
   )
 })

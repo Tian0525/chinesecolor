@@ -252,19 +252,21 @@ function PosterModal({ colors, onClose }) {
 
   function save() {
     const el = ref.current
+    const w = Number(el.getAttribute('width')) || 750
+    const h = Number(el.getAttribute('height')) || 1000
     const xml = new XMLSerializer().serializeToString(el)
     const svg64 = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(xml)
     const img = new Image()
     img.onload = () => {
       const canvas = document.createElement('canvas')
       const scale = 2
-      canvas.width = 750 * scale
-      canvas.height = 1000 * scale
+      canvas.width = w * scale
+      canvas.height = h * scale
       const ctx = canvas.getContext('2d')
       ctx.fillStyle = '#F8F6F0'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       ctx.scale(scale, scale)
-      ctx.drawImage(img, 0, 0, 750, 1000)
+      ctx.drawImage(img, 0, 0, w, h)
       const a = document.createElement('a')
       a.download = '我的五行星盘.png'
       a.href = canvas.toDataURL('image/png')
