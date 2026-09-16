@@ -81,6 +81,20 @@ function Viewfinder({ preview }) {
   )
 }
 
+// ---------------- 收下时 · 屏幕四边水墨晕染 ----------------
+function InkWash({ color }) {
+  const [r, g, b] = color ? hexToRgb(color.hex) : [44, 44, 44]
+  const ink = `rgba(${r}, ${g}, ${b}, 0.30)`
+  return (
+    <div className="inkwash" aria-hidden="true">
+      <span className="inkwash__vignette" />
+      {['tl', 'tc', 'tr', 'bl', 'bc', 'br'].map((pos) => (
+        <span key={pos} className={`inkwash__blob inkwash__blob--${pos}`} style={{ '--ink': ink }} />
+      ))}
+    </div>
+  )
+}
+
 // ---------------- 人工树 · 点灯 ----------------
 const LIGHTS = [
   { elem: 'mu', x: 150, y: 128 },
@@ -279,7 +293,9 @@ export default function App() {
   const [previewIdx, setPreviewIdx] = useState(null)
   const [bondOpen, setBondOpen] = useState(false)
   const [posterOpen, setPosterOpen] = useState(false)
+  const [wash, setWash] = useState(null)
   const fileRef = useRef(null)
+  const washSeq = useRef(0)
 
   const collectedColors = useMemo(() => collected.map(colorById).filter(Boolean), [collected])
   const cardColor = cardId ? colorById(cardId) : null
@@ -298,6 +314,8 @@ export default function App() {
     setCollected((prev) => (prev.includes(id) ? prev : [...prev, id]))
     setCardId(null)
     setPreviewIdx(null)
+    washSeq.current += 1
+    setWash({ key: washSeq.current, color: colorById(id) })
   }
 
   function remove(id) {
@@ -479,6 +497,8 @@ export default function App() {
               </button>
             ))}
           </nav>
+
+          {wash && <InkWash key={wash.key} color={wash.color} />}
         </div>
       )}
 

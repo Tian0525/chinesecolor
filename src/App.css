@@ -140,6 +140,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   flex-direction: column;
   background: var(--paper);
   box-shadow: 0 0 0 1px var(--line), 0 0 50px rgba(120, 100, 70, 0.12);
+  position: relative;
 }
 
 .frame__head {
@@ -520,6 +521,48 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .poster-modal__scroll svg { width: 100%; height: auto; display: block; border-radius: 12px; }
 .poster-modal__bar { display: flex; gap: 12px; }
 .poster-modal__bar .btn { flex: 1; }
+
+/* ---------------- 收下时 · 屏幕四边水墨晕染 ---------------- */
+.inkwash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 60;
+  overflow: hidden;
+}
+.inkwash__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, transparent 66%, rgba(44, 44, 44, 0.18) 100%);
+  opacity: 0;
+  animation: wash-vignette 1.6s ease-out forwards;
+}
+@keyframes wash-vignette {
+  0% { opacity: 0; }
+  25% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.inkwash__blob {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ink, rgba(44, 44, 44, 0.28)), transparent 68%);
+  filter: blur(16px);
+  opacity: 0;
+  animation: wash-blob 2s ease-out forwards;
+}
+.inkwash__blob--tl { top: -150px; left: -150px; }
+.inkwash__blob--tr { top: -150px; right: -150px; animation-delay: 0.05s; }
+.inkwash__blob--bl { bottom: -150px; left: -150px; animation-delay: 0.05s; }
+.inkwash__blob--br { bottom: -150px; right: -150px; animation-delay: 0.1s; }
+.inkwash__blob--tc { top: -180px; left: 50%; margin-left: -160px; animation-delay: 0.1s; }
+.inkwash__blob--bc { bottom: -180px; left: 50%; margin-left: -160px; animation-delay: 0.15s; }
+@keyframes wash-blob {
+  0% { opacity: 0; transform: scale(0.55); }
+  28% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(1.6); }
+}
 
 /* ---------------- 响应式微调 ---------------- */
 @media (max-width: 380px) {
