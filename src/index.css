@@ -1,0 +1,41 @@
+:root {
+  --bg: #f6f1e6;          /* 米白背景 */
+  --paper: #fbf8f0;       /* 卡片纸面 */
+  --text: #3c3730;        /* 深灰文字 */
+  --muted: #8a8274;       /* 次级灰 */
+  --line: #d8cfbe;        /* 分隔线 */
+  --bi: #267a5c;          /* 碧色（深绿） */
+  --bi-deep: #1c5a43;
+
+  font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC",
+    "STSong", "SimSun", serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
