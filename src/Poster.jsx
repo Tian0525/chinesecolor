@@ -23,13 +23,14 @@ const Poster = React.forwardRef(function Poster({ colors = [] }, ref) {
   const lines = wrap(text, 20)
   const cx = W / 2
 
-  // 已拾颜色名称（去重、保序）
+  // 已拾颜色名称（去重、保序），全部展示，每行至多 5 个
   const names = [...new Set(colors.map((c) => c.name))]
-  const swatches = names.slice(0, 5)
+  const swatches = names
   const swW = 64
   const swGap = 18
-  const swTotal = swatches.length * swW + (swatches.length - 1) * swGap
-  const swStart = (W - swTotal) / 2
+  const perRow = 5
+  const swatchRows = []
+  for (let i = 0; i < swatches.length; i += perRow) swatchRows.push(swatches.slice(i, i + perRow))
 
   // 动态纵向布局：自述行数决定下方各段位置与整幅高度
   const selfTitleY = 740
@@ -37,9 +38,11 @@ const Poster = React.forwardRef(function Poster({ colors = [] }, ref) {
   const lineH = 30
   const linesEndY = linesStartY + (lines.length - 1) * lineH
   const swatchTitleY = linesEndY + 42
-  const swatchCircleY = swatchTitleY + 34
-  const swatchNameY = swatchCircleY + 36
-  const ruleY = swatchNameY + 28
+  const swatchCircleY0 = swatchTitleY + 34
+  const swatchNameY0 = swatchCircleY0 + 34
+  const swRowH = 68
+  const swatchEndY = swatchNameY0 + (swatchRows.length - 1) * swRowH
+  const ruleY = swatchEndY + 30
   const footerY = ruleY + 24
   const H = footerY + 28
 
@@ -91,16 +94,26 @@ const Poster = React.forwardRef(function Poster({ colors = [] }, ref) {
           style={{ fontFamily: FONT, fontSize: 14, fill: '#4A443C', lineHeight: 1 }}>{ln}</text>
       ))}
 
-      {/* 已拾色样 */}
+      {/* 已拾色样（全部展示，多行自动换行） */}
       <text x={cx} y={swatchTitleY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 15, fill: INK, letterSpacing: 2 }}>拾得之色</text>
       <g>
-        {swatches.map((name, i) => {
-          const c = colors.find((cc) => cc.name === name)
-          const x = swStart + i * (swW + swGap) + swW / 2
+        {swatchRows.map((row, ri) => {
+          const rowW = row.length * swW + (row.length - 1) * swGap
+          const rowStart = (W - rowW) / 2
+          const circleY = swatchCircleY0 + ri * swRowH
+          const nameY = swatchNameY0 + ri * swRowH
           return (
-            <g key={name}>
-              <circle cx={x} cy={swatchCircleY} r={20} fill={c.hex} stroke="#fff" strokeWidth={1.5} />
-              <text x={x} y={swatchNameY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 13, fill: '#4A443C' }}>{name}</text>
+            <g key={ri}>
+              {row.map((name, i) => {
+                const c = colors.find((cc) => cc.name === name)
+                const x = rowStart + i * (swW + swGap) + swW / 2
+                return (
+                  <g key={name}>
+                    <circle cx={x} cy={circleY} r={20} fill={c.hex} stroke="#fff" strokeWidth={1.5} />
+                    <text x={x} y={nameY} textAnchor="middle" style={{ fontFamily: FONT, fontSize: 13, fill: '#4A443C' }}>{name}</text>
+                  </g>
+                )
+              })}
             </g>
           )
         })}
