@@ -31,6 +31,19 @@ function nearestColor(r, g, b) {
   return best
 }
 
+// ---------------- 毛笔逐字显现 ----------------
+function BrushText({ text }) {
+  return (
+    <>
+      {Array.from(text).map((ch, i) => (
+        <span key={i} className="brush-char" style={{ '--i': i }}>
+          {ch === ' ' ? ' ' : ch}
+        </span>
+      ))}
+    </>
+  )
+}
+
 // ---------------- 印章 ----------------
 function Seal({ children = '五色', size = 44 }) {
   return (
@@ -202,11 +215,32 @@ function BondCard({ a, b }) {
         <span className={`bondcard__badge bondcard__badge--${bond.kind}`}>{bond.label}</span>
         <span className="bondcard__title">{bond.title}</span>
       </div>
-      <p className="bondcard__text">{bond.text}</p>
+      <p className="bondcard__text"><BrushText text={bond.text} /></p>
       <div className="bondcard__pair">
         <span className="bondcard__dot" style={{ background: a.hex, color: textOnHex(a.hex) }}>{a.name}</span>
         <span className="bondcard__flow">↓</span>
         <span className="bondcard__dot" style={{ background: b.hex, color: textOnHex(b.hex) }}>{b.name}</span>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- 色块放大欣赏 ----------------
+function SwatchView({ color, onClose }) {
+  const el = ELEMENTS[color.elem]
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="swatchview" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <div className="swatchview__block" style={{ background: color.hex }}>
+          <span className="swatchview__name" style={{ color: textOnHex(color.hex) }}>{color.name}</span>
+        </div>
+        <div className="swatchview__meta">
+          <span className="tag" style={{ '--t': el.tone }}>{el.five} · {el.name}</span>
+          <span className="tag tag--dir">{el.dir}方</span>
+          <span className="hex">{color.hex}</span>
+        </div>
+        <p className="swatchview__story">{color.story}</p>
+        <button className="btn btn--ghost" onClick={onClose}>收起</button>
       </div>
     </div>
   )
@@ -290,12 +324,14 @@ export default function App() {
   const [cardId, setCardId] = useState(null)
   const [preview, setPreview] = useState(null)
   const [posterOpen, setPosterOpen] = useState(false)
+  const [swatchId, setSwatchId] = useState(null)
   const [wash, setWash] = useState(null)
   const fileRef = useRef(null)
   const washSeq = useRef(0)
 
   const collectedColors = useMemo(() => collected.map(colorById).filter(Boolean), [collected])
   const cardColor = cardId ? colorById(cardId) : null
+  const swatchColor = swatchId ? colorById(swatchId) : null
 
   useEffect(() => {
     try { localStorage.setItem(STORAGE, JSON.stringify(collected)) } catch { /* 忽略 */ }
@@ -398,13 +434,19 @@ export default function App() {
                       return (
                         <Fragment key={c.id}>
                           <div className="colorcard">
-                            <span className="colorcard__chip" style={{ background: c.hex }} />
+                            <button
+                              className="colorcard__chip"
+                              style={{ background: c.hex }}
+                              onClick={() => setSwatchId(c.id)}
+                              title="点按放大欣赏"
+                              aria-label={`放大欣赏 ${c.name}`}
+                            />
                             <div className="colorcard__body">
                               <div className="colorcard__row">
                                 <span className="colorcard__name">{c.name}</span>
                                 <span className="tag" style={{ '--t': el.tone }}>{el.five} · {el.name} · {el.dir}</span>
                               </div>
-                              <p className="colorcard__story">{c.story}</p>
+                              <p className="colorcard__story"><BrushText text={c.story} /></p>
                             </div>
                             <button className="colorcard__del" onClick={() => remove(c.id)} aria-label="移除">×</button>
                           </div>
@@ -468,6 +510,7 @@ export default function App() {
       )}
 
       {cardColor && <NameCard color={cardColor} onCollect={() => collect(cardColor.id)} />}
+      {swatchColor && <SwatchView color={swatchColor} onClose={() => setSwatchId(null)} />}
       {posterOpen && <PosterModal colors={collectedColors} onClose={() => setPosterOpen(false)} />}
     </div>
   )
