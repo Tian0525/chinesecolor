@@ -94,16 +94,16 @@ function Viewfinder({ preview }) {
   )
 }
 
-// ---------------- 收下时 · 屏幕四边水墨晕染 ----------------
+// ---------------- 拾色成功时 · 取景中心水墨涟漪 ----------------
 function InkWash({ color }) {
   const [r, g, b] = color ? hexToRgb(color.hex) : [44, 44, 44]
-  const ink = `rgba(${r}, ${g}, ${b}, 0.30)`
+  const ink = `rgba(${r}, ${g}, ${b}, 0.32)`
+  const ring = `rgba(${r}, ${g}, ${b}, 0.30)`
   return (
     <div className="inkwash" aria-hidden="true">
-      <span className="inkwash__vignette" />
-      {['tl', 'tc', 'tr', 'bl', 'bc', 'br'].map((pos) => (
-        <span key={pos} className={`inkwash__blob inkwash__blob--${pos}`} style={{ '--ink': ink }} />
-      ))}
+      <span className="inkwash__bloom" style={{ '--ink': ink }} />
+      <span className="inkwash__ring" style={{ '--ring': ring }} />
+      <span className="inkwash__ring inkwash__ring--2" style={{ '--ring': ring }} />
     </div>
   )
 }
@@ -340,6 +340,8 @@ export default function App() {
   function doPick(id) {
     const c = colorById(id)
     setPreview({ color: c, ts: Date.now() })
+    washSeq.current += 1
+    setWash({ key: washSeq.current, color: c })
     setTimeout(() => setCardId(id), 560)
   }
 
@@ -392,7 +394,10 @@ export default function App() {
           <main className="frame__body">
             {view === 'pick' && (
               <section className="view view--pick">
-                <Viewfinder preview={preview} />
+                <div className="viewfinder-stage">
+                  <Viewfinder preview={preview} />
+                  {wash && <InkWash key={wash.key} color={wash.color} />}
+                </div>
                 <div className="pick-tools">
                   <button className="btn btn--upload" onClick={() => fileRef.current && fileRef.current.click()}>
                     上传照片 · 自动取色
@@ -504,8 +509,6 @@ export default function App() {
               </button>
             ))}
           </nav>
-
-          {wash && <InkWash key={wash.key} color={wash.color} />}
         </div>
       )}
 

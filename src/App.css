@@ -234,6 +234,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ---------------- 玉璧取景框 ---------------- */
 .viewfinder-wrap { display: flex; justify-content: center; margin: 6px 0 14px; }
+.viewfinder-stage { position: relative; }
 .viewfinder { width: 250px; height: 250px; }
 .vf-outer { fill: var(--paper); stroke: var(--line); stroke-width: 2; }
 .vf-inner { fill: rgba(216, 207, 190, 0.18); stroke: var(--line); stroke-width: 1; }
@@ -550,46 +551,54 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .poster-modal__bar { display: flex; gap: 12px; }
 .poster-modal__bar .btn { flex: 1; }
 
-/* ---------------- 收下时 · 屏幕四边水墨晕染 ---------------- */
+/* ---------------- 拾色成功时 · 取景中心水墨涟漪 ---------------- */
 .inkwash {
   position: absolute;
-  inset: 0;
+  top: 6px;
+  left: 50%;
+  width: 250px;
+  height: 250px;
+  margin-left: -125px;
   pointer-events: none;
   z-index: 60;
-  overflow: hidden;
+  overflow: visible;
 }
-.inkwash__vignette {
+.inkwash__bloom {
   position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 50%, transparent 66%, rgba(44, 44, 44, 0.18) 100%);
-  opacity: 0;
-  animation: wash-vignette 1.6s ease-out forwards;
-}
-@keyframes wash-vignette {
-  0% { opacity: 0; }
-  25% { opacity: 1; }
-  100% { opacity: 0; }
-}
-.inkwash__blob {
-  position: absolute;
-  width: 320px;
-  height: 320px;
+  left: 50%;
+  top: 50%;
+  width: 180px;
+  height: 180px;
+  margin: -90px 0 0 -90px;
   border-radius: 50%;
-  background: radial-gradient(circle, var(--ink, rgba(44, 44, 44, 0.28)), transparent 68%);
-  filter: blur(16px);
+  background: radial-gradient(circle, var(--ink, rgba(44, 44, 44, 0.3)), transparent 66%);
+  filter: blur(10px);
   opacity: 0;
-  animation: wash-blob 2s ease-out forwards;
+  animation: ink-bloom 2.2s ease-out forwards;
 }
-.inkwash__blob--tl { top: -150px; left: -150px; }
-.inkwash__blob--tr { top: -150px; right: -150px; animation-delay: 0.05s; }
-.inkwash__blob--bl { bottom: -150px; left: -150px; animation-delay: 0.05s; }
-.inkwash__blob--br { bottom: -150px; right: -150px; animation-delay: 0.1s; }
-.inkwash__blob--tc { top: -180px; left: 50%; margin-left: -160px; animation-delay: 0.1s; }
-.inkwash__blob--bc { bottom: -180px; left: 50%; margin-left: -160px; animation-delay: 0.15s; }
-@keyframes wash-blob {
-  0% { opacity: 0; transform: scale(0.55); }
-  28% { opacity: 0.9; }
-  100% { opacity: 0; transform: scale(1.6); }
+.inkwash__ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 160px;
+  height: 160px;
+  margin: -80px 0 0 -80px;
+  border-radius: 50%;
+  border: 2px solid var(--ring, rgba(44, 44, 44, 0.3));
+  filter: blur(1px);
+  opacity: 0;
+  animation: ink-ring 2s ease-out forwards;
+}
+.inkwash__ring--2 { animation-delay: 0.3s; }
+@keyframes ink-bloom {
+  0% { opacity: 0; transform: scale(0.15); }
+  30% { opacity: 0.85; }
+  100% { opacity: 0; transform: scale(2); }
+}
+@keyframes ink-ring {
+  0% { opacity: 0; transform: scale(0.25); }
+  30% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(2.15); }
 }
 
 /* ---------------- 响应式微调 ---------------- */
