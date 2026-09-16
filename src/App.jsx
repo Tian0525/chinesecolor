@@ -20,6 +20,25 @@ function hexToRgb(hex) {
   return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]
 }
 
+// 向白色线性混合 a（0~1），返回 rgb() 字符串
+function tint(hex, a) {
+  const [r, g, b] = hexToRgb(hex)
+  const f = (v) => Math.round(v + (255 - v) * a)
+  return `rgb(${f(r)}, ${f(g)}, ${f(b)})`
+}
+
+// 柔边高斯模糊：本色居中，向四周柔和晕开至纯白（无硬边）
+function softWash(hex) {
+  return `radial-gradient(ellipse at 50% 50%,
+    ${hex} 0%,
+    ${hex} 44%,
+    ${tint(hex, 0.25)} 60%,
+    ${tint(hex, 0.55)} 74%,
+    ${tint(hex, 0.85)} 86%,
+    #ffffff 95%,
+    #ffffff 100%)`
+}
+
 function nearestColor(r, g, b) {
   let best = COLORS[0]
   let bestD = Infinity
@@ -412,7 +431,7 @@ export default function App() {
                     const el = ELEMENTS[c.elem]
                     return (
                       <button key={c.id} className="swatch" onClick={() => doPick(c.id)}>
-                        <span className="swatch__chip" style={{ background: c.hex }}>
+                        <span className="swatch__chip" style={{ background: softWash(c.hex) }}>
                           <span className="swatch__elem" style={{ color: el.tone }}>{el.name}</span>
                         </span>
                         <span className="swatch__name">{c.name}</span>
