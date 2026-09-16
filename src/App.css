@@ -334,48 +334,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .namecard__story { font-size: 13.5px; line-height: 1.9; color: var(--ink-soft); margin-bottom: 18px; }
 .namecard .btn { width: 100%; }
 
-/* ---------------- 羁绊弹层 ---------------- */
-.bond {
-  background: var(--paper);
-  border-radius: 12px;
-  max-width: 340px;
-  width: 100%;
-  padding: 22px;
-  box-shadow: 0 20px 60px rgba(44, 44, 44, 0.28);
-  text-align: center;
-  animation: pop 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
-}
-.bond__badge {
-  display: inline-block;
-  font-size: 13px;
-  padding: 4px 14px;
-  border-radius: 999px;
-  letter-spacing: 0.1em;
-  margin-bottom: 12px;
-}
-.bond__badge--birth { background: rgba(198, 161, 91, 0.16); color: #8a6d33; }
-.bond__badge--over { background: rgba(126, 90, 162, 0.14); color: #6a4a8c; }
-.bond__badge--same { background: rgba(107, 98, 90, 0.12); color: var(--ink-soft); }
-.bond__title { font-size: 20px; font-weight: 400; letter-spacing: 0.08em; }
-.bond__pair { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 18px 0; }
-.bond__dot {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  padding: 0 8px;
-  font-size: 13px;
-  letter-spacing: 0.02em;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
-}
-.bond__arrow { color: var(--muted); font-size: 18px; }
-.bond__text { font-size: 13.5px; line-height: 2; color: var(--ink-soft); text-align: left; margin-bottom: 20px; }
-.bond .btn { width: 100%; }
-
-/* ---------------- 色集 ---------------- */
-.cards { display: flex; flex-direction: column; gap: 12px; margin-top: 18px; }
+/* ---------------- 色集 · 上下瀑布流卷轴 ---------------- */
+.scroll-feed { position: relative; display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
 .colorcard {
   display: flex;
   gap: 14px;
@@ -394,29 +354,48 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .colorcard__del { color: var(--crab); font-size: 18px; line-height: 1; padding: 4px 6px; transition: color 0.15s; }
 .colorcard__del:hover { color: var(--seal); }
 
-/* 羁绊面板 */
-.bond-panel { margin-top: 28px; }
-.bond-panel__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.bond-panel__head h3 { font-size: 16px; font-weight: 400; letter-spacing: 0.1em; }
-.bond-panel__nav { display: flex; align-items: center; gap: 8px; }
-.bond-nav { width: 26px; height: 26px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink-soft); font-size: 16px; line-height: 1; }
-.bond-nav:disabled { opacity: 0.35; }
-.bond-nav__idx { font-size: 12px; color: var(--muted); min-width: 34px; text-align: center; }
-.bond-card {
-  width: 100%;
-  text-align: left;
-  padding: 16px;
+/* 羁绊卡 —— 两色之间的感悟 · 卡片式卷轴 */
+.bondcard {
+  position: relative;
+  margin-left: 26px;
+  padding: 15px 16px 15px 18px;
   border: 1px solid var(--line);
+  border-left: 3px solid var(--line);
   border-radius: 8px;
-  background: var(--paper);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: linear-gradient(180deg, #fffdf9 0%, #f6f1e6 100%);
+  box-shadow: 0 4px 14px rgba(120, 100, 70, 0.06);
+  animation: rise 0.4s ease both;
 }
-.bond-card:hover { border-color: var(--muted); box-shadow: 0 4px 16px rgba(120, 100, 70, 0.1); }
-.bond-card__badge { display: inline-block; font-size: 12px; margin-bottom: 8px; letter-spacing: 0.06em; }
-.bond-card__badge--birth { color: #8a6d33; }
-.bond-card__badge--over { color: #6a4a8c; }
-.bond-card__badge--same { color: var(--ink-soft); }
-.bond-card__text { font-size: 13px; line-height: 1.9; color: var(--ink-soft); }
+.bondcard--birth { border-left-color: var(--gold); }
+.bondcard--over { border-left-color: var(--purple); }
+.bondcard--same { border-left-color: var(--crab); }
+.bondcard__head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 9px; }
+.bondcard__badge {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  padding: 2px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.bondcard__badge--birth { background: rgba(198, 161, 91, 0.16); color: #8a6d33; }
+.bondcard__badge--over { background: rgba(126, 90, 162, 0.14); color: #6a4a8c; }
+.bondcard__badge--same { background: rgba(107, 98, 90, 0.12); color: var(--ink-soft); }
+.bondcard__title { font-size: 16px; font-weight: 400; letter-spacing: 0.06em; }
+.bondcard__text { font-size: 13px; line-height: 1.95; color: var(--ink-soft); margin-bottom: 12px; }
+.bondcard__pair { display: flex; align-items: center; gap: 10px; }
+.bondcard__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 44px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+.bondcard__flow { color: var(--muted); font-size: 14px; }
 
 /* ---------------- 星盘视图 ---------------- */
 .view--star, .view--tree { text-align: center; }

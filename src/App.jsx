@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { COLORS, colorById, ELEMENTS, CYCLE, bondNarrative, personality, textOnHex } from './data'
 import StarChart from './StarChart'
 import Poster from './Poster'
@@ -193,21 +193,20 @@ function NameCard({ color, onCollect }) {
   )
 }
 
-// ---------------- 羁绊弹层 ----------------
-function BondModal({ a, b, onClose }) {
+// ---------------- 羁绊卡 · 两色之间的感悟 ----------------
+function BondCard({ a, b }) {
   const bond = bondNarrative(a, b)
   return (
-    <div className="overlay">
-      <div className="bond" role="dialog" aria-modal="true">
-        <div className={`bond__badge bond__badge--${bond.kind}`}>{bond.label}</div>
-        <h3 className="bond__title">{bond.title}</h3>
-        <div className="bond__pair">
-          <span className="bond__dot" style={{ background: a.hex, color: textOnHex(a.hex) }}>{a.name}</span>
-          <span className="bond__arrow">→</span>
-          <span className="bond__dot" style={{ background: b.hex, color: textOnHex(b.hex) }}>{b.name}</span>
-        </div>
-        <p className="bond__text">{bond.text}</p>
-        <button className="btn btn--ghost" onClick={onClose}>知道了</button>
+    <div className={`bondcard bondcard--${bond.kind}`}>
+      <div className="bondcard__head">
+        <span className={`bondcard__badge bondcard__badge--${bond.kind}`}>{bond.label}</span>
+        <span className="bondcard__title">{bond.title}</span>
+      </div>
+      <p className="bondcard__text">{bond.text}</p>
+      <div className="bondcard__pair">
+        <span className="bondcard__dot" style={{ background: a.hex, color: textOnHex(a.hex) }}>{a.name}</span>
+        <span className="bondcard__flow">↓</span>
+        <span className="bondcard__dot" style={{ background: b.hex, color: textOnHex(b.hex) }}>{b.name}</span>
       </div>
     </div>
   )
@@ -290,8 +289,6 @@ export default function App() {
   const [collected, setCollected] = useState(loadCollected)
   const [cardId, setCardId] = useState(null)
   const [preview, setPreview] = useState(null)
-  const [previewIdx, setPreviewIdx] = useState(null)
-  const [bondOpen, setBondOpen] = useState(false)
   const [posterOpen, setPosterOpen] = useState(false)
   const [wash, setWash] = useState(null)
   const fileRef = useRef(null)
@@ -313,7 +310,6 @@ export default function App() {
   function collect(id) {
     setCollected((prev) => (prev.includes(id) ? prev : [...prev, id]))
     setCardId(null)
-    setPreviewIdx(null)
     washSeq.current += 1
     setWash({ key: washSeq.current, color: colorById(id) })
   }
@@ -340,14 +336,6 @@ export default function App() {
     }
     img.src = URL.createObjectURL(file)
   }
-
-  const pairs = useMemo(() => {
-    const p = []
-    for (let i = 1; i < collectedColors.length; i++) p.push([collectedColors[i - 1], collectedColors[i]])
-    return p
-  }, [collectedColors])
-
-  const shownIdx = pairs.length ? Math.min(Math.max(previewIdx ?? pairs.length - 1, 0), pairs.length - 1) : 0
 
   function enter() { setEntered(true); setView('pick') }
 
@@ -403,12 +391,13 @@ export default function App() {
                     <button className="btn btn--ghost" onClick={() => setView('pick')}>去拾色</button>
                   </div>
                 ) : (
-                  <>
-                    <div className="cards">
-                      {collectedColors.map((c) => {
-                        const el = ELEMENTS[c.elem]
-                        return (
-                          <div key={c.id} className="colorcard">
+                  <div className="scroll-feed">
+                    {collectedColors.map((c, i) => {
+                      const el = ELEMENTS[c.elem]
+                      const next = collectedColors[i + 1]
+                      return (
+                        <Fragment key={c.id}>
+                          <div className="colorcard">
                             <span className="colorcard__chip" style={{ background: c.hex }} />
                             <div className="colorcard__body">
                               <div className="colorcard__row">
@@ -419,35 +408,11 @@ export default function App() {
                             </div>
                             <button className="colorcard__del" onClick={() => remove(c.id)} aria-label="移除">×</button>
                           </div>
-                        )
-                      })}
-                    </div>
-
-                    {pairs.length > 0 && (
-                      <div className="bond-panel">
-                        <div className="bond-panel__head">
-                          <h3>色彩羁绊</h3>
-                          <div className="bond-panel__nav">
-                            <button className="bond-nav" disabled={pairs.length <= 1}
-                              onClick={() => setPreviewIdx(Math.max(0, (previewIdx ?? pairs.length - 1) - 1))}>‹</button>
-                            <span className="bond-nav__idx">{shownIdx + 1}/{pairs.length}</span>
-                            <button className="bond-nav" disabled={pairs.length <= 1}
-                              onClick={() => setPreviewIdx(Math.min(pairs.length - 1, (previewIdx ?? pairs.length - 1) + 1))}>›</button>
-                          </div>
-                        </div>
-                        {(() => {
-                          const [a, b] = pairs[shownIdx]
-                          const bond = bondNarrative(a, b)
-                          return (
-                            <button className="bond-card" onClick={() => setBondOpen(true)}>
-                              <span className={`bond-card__badge bond-card__badge--${bond.kind}`}>{bond.label} · {bond.title}</span>
-                              <p className="bond-card__text">{bond.text}</p>
-                            </button>
-                          )
-                        })()}
-                      </div>
-                    )}
-                  </>
+                          {next && <BondCard a={c} b={next} />}
+                        </Fragment>
+                      )
+                    })}
+                  </div>
                 )}
               </section>
             )}
@@ -503,9 +468,6 @@ export default function App() {
       )}
 
       {cardColor && <NameCard color={cardColor} onCollect={() => collect(cardColor.id)} />}
-      {bondOpen && pairs.length > 0 && (
-        <BondModal a={pairs[shownIdx][0]} b={pairs[shownIdx][1]} onClose={() => setBondOpen(false)} />
-      )}
       {posterOpen && <PosterModal colors={collectedColors} onClose={() => setPosterOpen(false)} />}
     </div>
   )
