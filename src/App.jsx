@@ -1,7 +1,8 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { COLORS, colorById, ELEMENTS, CYCLE, bondNarrative, personality, textOnHex } from './data'
+import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react'
+import { COLORS, colorById, ELEMENTS, CYCLE, bondNarrative, personality, textOnHex, isFullCircle, fullCircleNarrative } from './data'
 import StarChart from './StarChart'
 import Poster from './Poster'
+import * as sound from './sound'
 import './App.css'
 
 const STORAGE = 'wuse:wuxing'
@@ -265,6 +266,122 @@ function SwatchView({ color, onClose }) {
   )
 }
 
+// ---------------- 作品关联 · 图版（缩略图 + 色块高亮） ----------------
+function ArtworkFigure({ color, detail = false }) {
+  const uid = useId().replace(/[^a-zA-Z0-9]/g, '')
+  const a = color.artwork
+  const poly = a.highlight.map((p) => p.join(',')).join(' ')
+
+  // 局部放大：视野缩放到高亮区域
+  let viewBox = '0 0 400 300'
+  if (detail) {
+    const xs = a.highlight.map((p) => p[0])
+    const ys = a.highlight.map((p) => p[1])
+    const pad = 26
+    const minX = Math.min(...xs) - pad
+    const maxX = Math.max(...xs) + pad
+    const minY = Math.min(...ys) - pad
+    const maxY = Math.max(...ys) + pad
+    viewBox = `${minX} ${minY} ${maxX - minX} ${maxY - minY}`
+  }
+
+  return (
+    <svg viewBox={viewBox} className="artwork__fig" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <linearGradient id={`awp-${uid}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#F4EFE1" />
+          <stop offset="1" stopColor="#D9D0BE" />
+        </linearGradient>
+        <radialGradient id={`awc-${uid}`}>
+          <stop offset="0" stopColor={color.hex} stopOpacity="0.5" />
+          <stop offset="1" stopColor={color.hex} stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <rect width="400" height="300" fill={`url(#awp-${uid})`} />
+      <circle cx="120" cy="120" r="82" fill={`url(#awc-${uid})`} />
+      <circle cx="292" cy="214" r="96" fill={`url(#awc-${uid})`} opacity="0.72" />
+      <path d="M 0 210 C 90 170 180 250 260 208 C 320 178 360 190 400 172" fill="none" stroke="#B8AD97" strokeWidth="2" opacity="0.55" />
+      <polygon points={poly} fill={color.hex} opacity="0.34" className="artwork__hl-fill" />
+      <polygon points={poly} fill="none" stroke={color.hex} strokeWidth="1.8" strokeDasharray="5 4" className="artwork__hl-line" />
+    </svg>
+  )
+}
+
+// ---------------- 作品关联 · 高清查看 ----------------
+function ArtworkView({ color, onClose }) {
+  const a = color.artwork
+  const [detail, setDetail] = useState(false)
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="artwork-view" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <div className="artwork-view__head">
+          <span className="artwork-view__title">《{a.title}》</span>
+          <span className="artwork-view__by">{a.artist} · {a.dynasty}</span>
+        </div>
+        <div className="artwork-view__stage">
+          <ArtworkFigure color={color} detail={detail} />
+          <span className="artwork-view__hl-note" style={{ borderColor: color.hex, color: color.hex }}>
+            高亮区 · {color.name} {color.hex}
+          </span>
+        </div>
+        <p className="artwork-view__fn">{a.colorFunction}</p>
+        <p className="artwork-view__prompt">{a.observationPrompt}</p>
+        {a.location && <p className="artwork-view__loc">📍 {a.location}</p>}
+        <div className="artwork-view__actions">
+          <button className="btn btn--ghost" onClick={() => setDetail((d) => !d)}>
+            {detail ? '看全幅' : '看局部放大'}
+          </button>
+          <button className="btn btn--ghost" onClick={onClose}>收起</button>
+        </div>
+        <p className="artwork-view__credit">作品图片由广州艺术博物院提供 · 仅用于本展览配套数字体验</p>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- NFC 名帖 · 自动收下 ----------------
+function NfcToast({ color, onDone }) {
+  const el = ELEMENTS[color.elem]
+  const [r, g, b] = hexToRgb(color.hex)
+  const ink = `rgba(${r}, ${g}, ${b}, 0.38)`
+  useEffect(() => {
+    const t = setTimeout(onDone, 3000)
+    return () => clearTimeout(t)
+  }, [onDone])
+  return (
+    <div className="nfctoast" role="status">
+      <span className="nfctoast__bloom" style={{ '--ink': ink }} />
+      <div className="nfctoast__card">
+        <span className="nfctoast__name" style={{ color: textOnHex(color.hex), background: color.hex }}>{color.name}</span>
+        <div className="nfctoast__meta">
+          <span className="tag" style={{ '--t': el.tone }}>{el.five} · {el.name}</span>
+          <span className="tag tag--dir">{el.dir}方</span>
+          <span className="hex">{color.hex}</span>
+        </div>
+        <span className="nfctoast__hint">碰一下 · 颜色已收入五色册</span>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- 五行大圆满 · 集齐五色的庆祝 ----------------
+function FullCircleToast({ onDone }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 3400)
+    return () => clearTimeout(t)
+  }, [onDone])
+  return (
+    <div className="fulltoast" role="status">
+      <span className="fulltoast__bloom" />
+      <div className="fulltoast__card">
+        <span className="fulltoast__seal">圆满</span>
+        <span className="fulltoast__title">五行大圆满</span>
+        <span className="fulltoast__hint">青赤黄白黑 · 相生相克，皆入你怀</span>
+      </div>
+    </div>
+  )
+}
+
 // ---------------- 海报弹层 ----------------
 function PosterModal({ colors, onClose }) {
   const ref = useRef(null)
@@ -347,19 +464,96 @@ export default function App() {
   const [posterOpen, setPosterOpen] = useState(false)
   const [swatchId, setSwatchId] = useState(null)
   const [wash, setWash] = useState(null)
+  const [artworkId, setArtworkId] = useState(null)
+  const [nfcToast, setNfcToast] = useState(null)
+  const [nfcReading, setNfcReading] = useState(false)
+  const [nfcSupported] = useState(() => 'NDEFReader' in window)
+  const [muted, setMutedState] = useState(() => sound.loadMuted())
+  const [fullToast, setFullToast] = useState(false)
   const fileRef = useRef(null)
   const washSeq = useRef(0)
+  const wasFullRef = useRef(null)
 
   const collectedColors = useMemo(() => collected.map(colorById).filter(Boolean), [collected])
+  const fullCircle = useMemo(() => isFullCircle(collectedColors), [collectedColors])
   const cardColor = cardId ? colorById(cardId) : null
   const swatchColor = swatchId ? colorById(swatchId) : null
+  const artworkColor = artworkId ? colorById(artworkId) : null
 
   useEffect(() => {
     try { localStorage.setItem(STORAGE, JSON.stringify(collected)) } catch { /* 忽略 */ }
   }, [collected])
 
+  // 首次集齐五色（本次会话内的过渡）：金色庆祝 + 圆满音效
+  useEffect(() => {
+    if (wasFullRef.current === null) {
+      wasFullRef.current = fullCircle
+      return
+    }
+    if (fullCircle && !wasFullRef.current) {
+      wasFullRef.current = true
+      sound.playFullCircle()
+      setFullToast(true)
+    } else if (!fullCircle) {
+      wasFullRef.current = false
+    }
+  }, [fullCircle])
+
+  function toggleMute() {
+    const next = !muted
+    setMutedState(next)
+    sound.setMuted(next)
+  }
+
+  // NFC / 二维码 URL 入口：?color=shiqing → 自动进入并收下（无需确认）
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get('color')
+    if (!id || !colorById(id)) return
+    // 清理参数，避免刷新时重复触发
+    const url = new URL(window.location.href)
+    url.searchParams.delete('color')
+    window.history.replaceState({}, '', url.pathname + url.search + url.hash)
+    setEntered(true)
+    setCollected((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setNfcToast(colorById(id))
+  }, [])
+
+  function autoCollect(id) {
+    const c = colorById(id)
+    if (!c) return
+    if (navigator.vibrate) navigator.vibrate(15)
+    sound.playCollect()
+    setCollected((prev) => (prev.includes(id) ? prev : [...prev, id]))
+    setNfcToast(c)
+  }
+
+  // Web NFC（Android Chrome）：读取标签 URL 中的 color 参数
+  async function startNfc() {
+    if (!('NDEFReader' in window) || nfcReading) return
+    setNfcReading(true)
+    try {
+      const ndef = new window.NDEFReader()
+      await ndef.scan()
+      ndef.addEventListener('reading', ({ message }) => {
+        for (const rec of message.records) {
+          let text = ''
+          try { text = new TextDecoder().decode(rec.data) } catch { continue }
+          const m = text.match(/color=([A-Za-z0-9_-]+)/)
+          if (m && colorById(m[1])) {
+            autoCollect(m[1])
+            setNfcReading(false)
+            break
+          }
+        }
+      })
+    } catch {
+      setNfcReading(false)
+    }
+  }
+
   function doPick(id) {
     const c = colorById(id)
+    sound.playPick()
     setPreview({ color: c, ts: Date.now() })
     washSeq.current += 1
     setWash({ key: washSeq.current, color: c })
@@ -367,6 +561,7 @@ export default function App() {
   }
 
   function collect(id) {
+    sound.playCollect()
     setCollected((prev) => (prev.includes(id) ? prev : [...prev, id]))
     setCardId(null)
     washSeq.current += 1
@@ -409,7 +604,17 @@ export default function App() {
               <Seal size={30}>色</Seal>
               <span className="frame__title">五色·五行</span>
             </div>
-            <span className="frame__count">{collected.length} 色</span>
+            <div className="frame__head-right">
+              <button
+                className="sound-toggle"
+                onClick={toggleMute}
+                aria-label={muted ? '开启音效' : '静音'}
+                title={muted ? '开启音效' : '静音'}
+              >
+                {muted ? '🔇' : '🔊'}
+              </button>
+              <span className="frame__count">{collected.length} 色</span>
+            </div>
           </header>
 
           <main className="frame__body">
@@ -420,11 +625,19 @@ export default function App() {
                   {wash && <InkWash key={wash.key} color={wash.color} />}
                 </div>
                 <div className="pick-tools">
+                  {nfcSupported && (
+                    <button className="btn btn--nfc" onClick={startNfc} disabled={nfcReading}>
+                      {nfcReading ? '正在感应 NFC 标签…' : '碰一下 NFC · 拾色'}
+                    </button>
+                  )}
                   <button className="btn btn--upload" onClick={() => fileRef.current && fileRef.current.click()}>
                     上传照片 · 自动取色
                   </button>
                   <input ref={fileRef} type="file" accept="image/*" hidden onChange={onUpload} />
                 </div>
+                {!nfcSupported && (
+                  <p className="nfc-note">此设备暂不支持 Web NFC，可用二维码或上传照片拾色</p>
+                )}
                 <p className="pick-caption">或从册页色样中，拾取你心仪的一味</p>
                 <div className="palette">
                   {COLORS.map((c) => {
@@ -454,6 +667,12 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="scroll-feed">
+                    {fullCircle && (
+                      <div className="fullcircle">
+                        <span className="fullcircle__badge">五行大圆满</span>
+                        <p className="fullcircle__text"><BrushText text={fullCircleNarrative(collectedColors)} /></p>
+                      </div>
+                    )}
                     {collectedColors.map((c, i) => {
                       const el = ELEMENTS[c.elem]
                       const next = collectedColors[i + 1]
@@ -471,8 +690,24 @@ export default function App() {
                               <div className="colorcard__row">
                                 <span className="colorcard__name">{c.name}</span>
                                 <span className="tag" style={{ '--t': el.tone }}>{el.five} · {el.name} · {el.dir}</span>
+                                <span className="colorcard__hex">{c.hex}</span>
                               </div>
                               <p className="colorcard__story"><BrushText text={c.story} /></p>
+                              {c.artwork ? (
+                                <button className="artwork" onClick={() => setArtworkId(c.id)} aria-label={`查看《${c.artwork.title}》作品关联`}>
+                                  <ArtworkFigure color={c} />
+                                  <span className="artwork__meta">
+                                    <span className="artwork__title">《{c.artwork.title}》</span>
+                                    <span className="artwork__by">{c.artwork.artist} · {c.artwork.dynasty}</span>
+                                    {c.artwork.location && <span className="artwork__loc">{c.artwork.location}</span>}
+                                  </span>
+                                  <span className="artwork__prompt">{c.artwork.observationPrompt}</span>
+                                </button>
+                              ) : (
+                                <div className="artwork artwork--empty">
+                                  这一味颜色在广州艺博院的馆藏里，还有更多落点正在整理中。
+                                </div>
+                              )}
                             </div>
                             <button className="colorcard__del" onClick={() => remove(c.id)} aria-label="移除">×</button>
                           </div>
@@ -499,6 +734,12 @@ export default function App() {
                 ) : (
                   <div className="starview">
                     <StarChart colors={collectedColors} className="starview__chart" />
+                    {fullCircle && (
+                      <div className="fullcircle fullcircle--star">
+                        <span className="fullcircle__badge">五行大圆满</span>
+                        <p className="fullcircle__text">{fullCircleNarrative(collectedColors)}</p>
+                      </div>
+                    )}
                     <div className="starview__self">
                       <h3>我的五行自述</h3>
                       <p>{personality(collectedColors)}</p>
@@ -535,6 +776,9 @@ export default function App() {
 
       {cardColor && <NameCard color={cardColor} onCollect={() => collect(cardColor.id)} />}
       {swatchColor && <SwatchView color={swatchColor} onClose={() => setSwatchId(null)} />}
+      {artworkColor && <ArtworkView color={artworkColor} onClose={() => setArtworkId(null)} />}
+      {nfcToast && <NfcToast color={nfcToast} onDone={() => setNfcToast(null)} />}
+      {fullToast && <FullCircleToast onDone={() => setFullToast(false)} />}
       {posterOpen && <PosterModal colors={collectedColors} onClose={() => setPosterOpen(false)} />}
     </div>
   )

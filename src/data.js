@@ -31,8 +31,26 @@ export function relation(a, b) {
 // ---------------- 色库（18 味传统色） ----------------
 export const COLORS = [
   // 木 · 青 · 东
-  { id: 'shiqing',   name: '石青', hex: '#1685A9', elem: 'mu',   story: '石青，从矿物里炼出的青。它属「木」，居东，象征生发。古人画青绿山水，那抹「青」，多半就是它。它是从石头里长出来的春天。' },
-  { id: 'bise',      name: '碧色', hex: '#1C7C7C', elem: 'mu',   story: '碧色，雨后的青。属「木」，居东。欧阳修写「夜雨染成天水碧」，你看到的碧色，和他说的，是不是同一个？' },
+  {
+    id: 'shiqing', name: '石青', hex: '#1685A9', elem: 'mu',
+    story: '石青，从矿物里炼出的青。它属「木」，居东，象征生发。古人画青绿山水，那抹「青」，多半就是它。它是从石头里长出来的春天。',
+    artwork: {
+      title: '仿阿房宫山水', artist: '袁耀', dynasty: '清', location: '四层17号展厅',
+      colorFunction: '石青是青绿山水的核心色。画家以它铺染山体，营造出巍峨壮丽的视觉效果，是整幅画里最提气的一抹青。',
+      observationPrompt: '找到这幅画，看看石青在远处的山与近处的树之间，有没有色温的微妙变化？',
+      highlight: [[96, 176], [238, 150], [322, 196], [128, 244]],
+    },
+  },
+  {
+    id: 'bise', name: '碧色', hex: '#1C7C7C', elem: 'mu',
+    story: '碧色，雨后的青。属「木」，居东。欧阳修写「夜雨染成天水碧」，你看到的碧色，和他说的，是不是同一个？',
+    artwork: {
+      title: '波罗浴日图', artist: '叶衍兰', dynasty: '清',
+      colorFunction: '碧色是水天交融的媒介。画家以碧色衔接水面与天色，让远方的海与天难分彼此。',
+      observationPrompt: '看看碧色如何在画面的水与天之间，完成一次不动声色的过渡？',
+      highlight: [[36, 64], [364, 64], [364, 132], [36, 132]],
+    },
+  },
   { id: 'zhuqing',   name: '竹青', hex: '#789262', elem: 'mu',   story: '竹青，竹子的颜色。属「木」，居东。古人爱竹，因为竹有节、虚心。竹青，是一节一节的清高。' },
   { id: 'songhua',   name: '松花', hex: '#057748', elem: 'mu',   story: '松花，松树新发的绿。属「木」，居东。松色苍而松花嫩，是古画里最克制的一抹生意。' },
   // 火 · 赤 · 南
@@ -41,7 +59,16 @@ export const COLORS = [
   { id: 'yanzhi',    name: '胭脂', hex: '#9D2933', elem: 'huo',  story: '胭脂，胭脂花染出的红。属「火」，居南。它红里带紫，是女儿家眉目间的一点心事。' },
   { id: 'feihong',   name: '绯红', hex: '#C83C23', elem: 'huo',  story: '绯红，绯是浅赤。属「火」，居南。晚霞初起、桃花初放，都是这层将红未透的绯。' },
   // 土 · 黄 · 中
-  { id: 'cihuang',   name: '雌黄', hex: '#FFC64B', elem: 'tu',   story: '雌黄，矿石磨成的黄。属「土」，居中。古代人拿它当修正液用——写错字了，涂点雌黄，重新写。「信口雌黄」说的就是随口改口。它是一抹带着「修正」意味的颜色。' },
+  {
+    id: 'cihuang', name: '雌黄', hex: '#FFC64B', elem: 'tu',
+    story: '雌黄，矿石磨成的黄。属「土」，居中。古代人拿它当修正液用——写错字了，涂点雌黄，重新写。「信口雌黄」说的就是随口改口。它是一抹带着「修正」意味的颜色。',
+    artwork: {
+      title: '蟠桃图', artist: '恽寿平', dynasty: '清', location: '四层17号展厅',
+      colorFunction: '雌黄出现在桃实的局部。画家用雌黄的暖调，让桃子看起来像是被阳光晒过，有了可口的熟透感。',
+      observationPrompt: '到四层17号展厅找到这幅画，看看雌黄在桃子上的颗粒感。',
+      highlight: [[168, 118], [262, 118], [262, 202], [168, 202]],
+    },
+  },
   { id: 'zheshi',    name: '赭石', hex: '#845A33', elem: 'tu',   story: '赭石，赭色偏褐。属「土」，居中。古人用它涂染衣料、打底上色。它是大地的肤色，也是古画里最稳的底色。' },
   { id: 'tenghuang', name: '藤黄', hex: '#FFB61E', elem: 'tu',   story: '藤黄，从藤树的树脂里得来。属「土」，居中。它是黄色里最亮的一味，像一勺凝固的阳光。' },
   { id: 'hupo',      name: '琥珀', hex: '#CA6924', elem: 'tu',   story: '琥珀，树脂沉睡千万年成石。属「土」，居中。它把一段松香的光阴，凝成了一小块温润的黄。' },
@@ -116,6 +143,30 @@ export function bondNarrative(a, b) {
     title: `${fromElem.name}克${toElem.name}`,
     text: OVER_TEXT[rel.from](fromColor, toColor),
   }
+}
+
+// ---------------- 五行大圆满（五色全收集） ----------------
+// 已收集颜色所覆盖的五行元素（去重、按首次出现顺序）
+export function collectedElements(colors) {
+  const seen = []
+  for (const c of colors || []) {
+    if (c.elem && !seen.includes(c.elem)) seen.push(c.elem)
+  }
+  return seen
+}
+
+// 是否集齐全部五行（木火土金水）
+export function isFullCircle(colors) {
+  const elems = new Set((colors || []).map((c) => c.elem))
+  return CYCLE.every((e) => elems.has(e))
+}
+
+// 五色全收集的专属「朋友聊天」式文案
+export function fullCircleNarrative(colors) {
+  const elems = collectedElements(colors).map((e) => ELEMENTS[e])
+  const names = elems.map((e) => e.name).join('、') // 木、火、土、金、水
+  const five = elems.map((e) => e.five).join('、')  // 青、赤、黄、白、黑
+  return `五行大圆满。你走完了${names}，也集齐了${five}。相生是一条环，相克是另一条环，两条环在你手里合成一个圆。青赤黄白黑，在天成象，在地成形。你收集的不是颜色，是一整个相生相克的天地。`
 }
 
 // ---------------- 个人色彩自述（星盘） ----------------

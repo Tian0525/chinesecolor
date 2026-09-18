@@ -172,6 +172,21 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border: 1px solid var(--line);
   border-radius: 999px;
 }
+.frame__head-right { display: flex; align-items: center; gap: 10px; }
+.sound-toggle {
+  font-size: 16px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+.sound-toggle:hover { background: rgba(216, 207, 190, 0.25); }
 
 .frame__body {
   flex: 1;
@@ -412,6 +427,36 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .bondcard__flow { color: var(--muted); font-size: 14px; }
 
+/* ---------------- 五行大圆满 · 集齐五色 ---------------- */
+.fullcircle {
+  position: relative;
+  margin: 4px 0 2px;
+  padding: 18px 18px 16px;
+  border: 1px solid rgba(198, 161, 91, 0.55);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(198, 161, 91, 0.18), transparent 62%),
+    linear-gradient(180deg, #fffcf3 0%, #f7efdd 100%);
+  box-shadow: 0 6px 22px rgba(198, 161, 91, 0.16);
+  animation: rise 0.5s ease both;
+}
+.fullcircle--star { text-align: left; }
+.fullcircle__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: #8a6d33;
+  background: rgba(198, 161, 91, 0.2);
+  border: 1px solid rgba(198, 161, 91, 0.5);
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.fullcircle__badge::before { content: '☯'; font-size: 12px; }
+.fullcircle__text { font-size: 13px; line-height: 1.9; color: var(--ink-soft); font-family: var(--kai); }
+
 /* ---------------- 毛笔逐字显现 ---------------- */
 .brush-char {
   display: inline-block;
@@ -466,6 +511,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .starchart { display: block; }
 .chart-ring { fill: none; stroke: var(--line); stroke-width: 1; opacity: 0.8; }
 .chart-pentagon { fill: none; stroke: #CBC2AF; stroke-width: 1; opacity: 0.7; }
+.chart-pentagon--full {
+  stroke: var(--gold);
+  stroke-width: 1.6;
+  opacity: 0.9;
+  stroke-dasharray: 3 5;
+  animation: pentagon-flow 8s linear infinite;
+}
+@keyframes pentagon-flow { to { stroke-dashoffset: -48; } }
 .chart-star { fill: none; stroke: #CBC2AF; stroke-width: 1; stroke-dasharray: 3 4; opacity: 0.6; }
 .chart-node { fill: none; stroke: #CBC2AF; stroke-width: 1.4; }
 .chart-node--lit { stroke: var(--muted); }
@@ -601,6 +654,231 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   30% { opacity: 0.9; }
   100% { opacity: 0; transform: scale(2.15); }
 }
+
+/* ---------------- 色值 ---------------- */
+.colorcard__hex {
+  font-size: 10.5px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: 0.02em;
+  margin-left: auto;
+}
+
+/* ---------------- 作品关联模块 ---------------- */
+.artwork {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card);
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+.artwork:active { transform: scale(0.99); }
+.artwork:hover { box-shadow: 0 6px 18px rgba(120, 100, 70, 0.14); }
+.artwork__fig {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  background: #f4efe1;
+}
+.artwork__hl-fill { animation: hl-pulse 2.6s ease-in-out infinite; }
+@keyframes hl-pulse {
+  0%, 100% { opacity: 0.24; }
+  50% { opacity: 0.46; }
+}
+.artwork__meta {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding: 12px 14px 4px;
+}
+.artwork__title { font-size: 15px; letter-spacing: 0.04em; }
+.artwork__by { font-size: 12px; color: var(--muted); }
+.artwork__loc { font-size: 11.5px; color: var(--ink-soft); border: 1px solid var(--line); padding: 2px 8px; border-radius: 999px; }
+.artwork__prompt {
+  display: block;
+  padding: 6px 14px 14px;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  font-family: var(--kai);
+}
+.artwork__prompt::before { content: '❯ '; color: var(--seal); }
+.artwork--empty {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  background: rgba(216, 207, 190, 0.12);
+}
+
+/* ---------------- 作品高清查看弹层 ---------------- */
+.artwork-view {
+  width: 100%;
+  max-width: 400px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background: var(--paper);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 20px 60px rgba(44, 44, 44, 0.3);
+  animation: pop 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.artwork-view__head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.artwork-view__title { font-size: 20px; letter-spacing: 0.06em; }
+.artwork-view__by { font-size: 13px; color: var(--muted); }
+.artwork-view__stage { position: relative; border-radius: 8px; overflow: hidden; }
+.artwork-view__stage .artwork__fig { aspect-ratio: 4 / 3; }
+.artwork-view__hl-note {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+}
+.artwork-view__fn { margin-top: 14px; font-size: 13.5px; line-height: 1.9; color: var(--ink-soft); }
+.artwork-view__prompt { margin-top: 10px; font-size: 13.5px; line-height: 1.8; color: var(--ink); font-family: var(--kai); }
+.artwork-view__loc { margin-top: 10px; font-size: 12.5px; color: var(--ink-soft); }
+.artwork-view__actions { display: flex; gap: 12px; margin-top: 16px; }
+.artwork-view__actions .btn { flex: 1; }
+.artwork-view__credit { margin-top: 14px; font-size: 10.5px; color: var(--muted); letter-spacing: 0.03em; text-align: center; }
+
+/* ---------------- NFC 名帖 · 自动收下 ---------------- */
+.nfctoast {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  pointer-events: none;
+}
+.nfctoast__bloom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 340px;
+  height: 340px;
+  margin: -170px 0 0 -170px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--ink, rgba(44, 44, 44, 0.35)), transparent 68%);
+  filter: blur(14px);
+  animation: ink-bloom 2.6s ease-out forwards;
+}
+.nfctoast__card {
+  position: relative;
+  background: var(--paper);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 20px 60px rgba(44, 44, 44, 0.3);
+  text-align: center;
+  animation: nfc-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+@keyframes nfc-pop {
+  0% { opacity: 0; transform: scale(0.86) translateY(14px); }
+  100% { opacity: 1; transform: none; }
+}
+.nfctoast__name {
+  display: inline-block;
+  padding: 8px 22px;
+  border-radius: 6px;
+  font-size: 26px;
+  letter-spacing: 0.12em;
+}
+.nfctoast__meta { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 12px 0 8px; flex-wrap: wrap; }
+.nfctoast__hint { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; font-family: var(--kai); }
+
+/* ---------------- 五行大圆满 · 庆祝弹层 ---------------- */
+.fulltoast {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+  pointer-events: none;
+}
+.fulltoast__bloom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(198, 161, 91, 0.42), rgba(231, 201, 139, 0.18) 45%, transparent 70%);
+  filter: blur(16px);
+  animation: full-bloom 3s ease-out forwards;
+}
+@keyframes full-bloom {
+  0% { opacity: 0; transform: scale(0.25); }
+  28% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.6); }
+}
+.fulltoast__card {
+  position: relative;
+  background: rgba(255, 252, 243, 0.96);
+  border: 1px solid rgba(198, 161, 91, 0.6);
+  border-radius: 14px;
+  padding: 22px 34px;
+  box-shadow: 0 20px 60px rgba(120, 90, 40, 0.28);
+  text-align: center;
+  animation: nfc-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.fulltoast__seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--seal);
+  color: #fff;
+  border-radius: 5px;
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 5px 9px;
+  transform: rotate(-5deg);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.28);
+}
+.fulltoast__title {
+  display: block;
+  margin-top: 14px;
+  font-size: 24px;
+  letter-spacing: 0.18em;
+  text-indent: 0.18em;
+  color: #8a6d33;
+}
+.fulltoast__hint {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  font-family: var(--kai);
+}
+
+/* ---------------- NFC 按钮 ---------------- */
+.btn--nfc {
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--gold);
+  font-size: 13px;
+  padding: 10px 18px;
+}
+.btn--nfc:hover { background: rgba(198, 161, 91, 0.12); }
+.btn--nfc:disabled { opacity: 0.55; cursor: progress; }
+.nfc-note { text-align: center; color: var(--muted); font-size: 11.5px; margin-bottom: 8px; letter-spacing: 0.03em; }
 
 /* ---------------- 响应式微调 ---------------- */
 @media (max-width: 380px) {

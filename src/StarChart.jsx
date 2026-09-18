@@ -1,4 +1,4 @@
-import { ELEMENTS, relation, CYCLE } from './data'
+import { ELEMENTS, relation, CYCLE, isFullCircle } from './data'
 
 // 五行生克星盘 —— 以「相生五边形」为骨架，相克连线为隐线
 // 坐标系：400 × 400，圆心 (200, 200)，半径 R
@@ -39,6 +39,7 @@ function layout(colors) {
 // 星盘主体（可复用于独立 SVG 或海报内嵌 <g>）
 export function chartGroup(colors, { backdrop = true, animate = true } = {}) {
   const nodes = layout(colors)
+  const full = isFullCircle(colors)
 
   // 相生五边形（隐线骨架）
   const pentagon = CYCLE.map((e) => polar(POS[e].angle, R))
@@ -73,7 +74,7 @@ export function chartGroup(colors, { backdrop = true, animate = true } = {}) {
         <g className="chart-backdrop">
           <circle cx={CX} cy={CY} r={R + 46} className="chart-ring" />
           <circle cx={CX} cy={CY} r={R - 40} className="chart-ring" />
-          <path d={pentagonPath} className="chart-pentagon" />
+          <path d={pentagonPath} className={full ? 'chart-pentagon chart-pentagon--full' : 'chart-pentagon'} />
           <path d={starPath} className="chart-star" />
         </g>
       )}
