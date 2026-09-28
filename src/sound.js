@@ -62,3 +62,9 @@ export function playFullCircle() {
   const notes = [392, 440, 523, 659, 784] // G4 A4 C5 E5 G5
   notes.forEach((f, i) => tone({ freq: f, type: 'sine', dur: 0.5, gain: 0.04, when: i * 0.12 }))
 }
+
+// 结缘泛音：轻盈上行琶音（珠子串起）
+export function playKarma() {
+  const notes = [523, 659, 784, 1047] // C5 E5 G5 C6
+  notes.forEach((f, i) => tone({ freq: f, type: 'sine', dur: 0.42, gain: 0.038, when: i * 0.09 }))
+}

@@ -2,6 +2,7 @@ import { Fragment, useEffect, useId, useMemo, useRef, useState } from 'react'
 import { COLORS, colorById, ELEMENTS, CYCLE, bondNarrative, personality, textOnHex, isFullCircle, fullCircleNarrative } from './data'
 import StarChart from './StarChart'
 import Poster from './Poster'
+import KarmaModal from './Bracelet'
 import * as sound from './sound'
 import './App.css'
 
@@ -463,6 +464,7 @@ export default function App() {
   const [preview, setPreview] = useState(null)
   const [posterOpen, setPosterOpen] = useState(false)
   const [swatchId, setSwatchId] = useState(null)
+  const [karmaOpen, setKarmaOpen] = useState(false)
   const [wash, setWash] = useState(null)
   const [artworkId, setArtworkId] = useState(null)
   const [nfcToast, setNfcToast] = useState(null)
@@ -723,7 +725,7 @@ export default function App() {
             {view === 'star' && (
               <section className="view view--star">
                 <h2 className="view__title">化色 · 游记</h2>
-                <p className="view__sub">你的收集路径，是一张五行星盘</p>
+                <p className="view__sub">你的收集路径，是一张五行星盘。拾满三色，还能结下一串专属手串</p>
                 {collectedColors.length < 3 ? (
                   <div className="empty">
                     <StarChart colors={collectedColors} animate={false} className="empty__chart" />
@@ -744,7 +746,10 @@ export default function App() {
                       <h3>我的五行自述</h3>
                       <p>{personality(collectedColors)}</p>
                     </div>
-                    <button className="btn btn--primary" onClick={() => setPosterOpen(true)}>生成分享海报</button>
+                    <div className="starview__actions">
+                      <button className="btn btn--primary" onClick={() => setKarmaOpen(true)}>结缘 · 定制手串</button>
+                      <button className="btn btn--ghost" onClick={() => setPosterOpen(true)}>生成分享海报</button>
+                    </div>
                   </div>
                 )}
               </section>
@@ -780,6 +785,7 @@ export default function App() {
       {nfcToast && <NfcToast color={nfcToast} onDone={() => setNfcToast(null)} />}
       {fullToast && <FullCircleToast onDone={() => setFullToast(false)} />}
       {posterOpen && <PosterModal colors={collectedColors} onClose={() => setPosterOpen(false)} />}
+      {karmaOpen && <KarmaModal colors={collectedColors} onClose={() => setKarmaOpen(false)} />}
     </div>
   )
 }

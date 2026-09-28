@@ -887,3 +887,214 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   .starview__chart, .tree { width: 280px; height: 280px; }
   .tree { height: 210px; }
 }
+
+/* ---------------- 星盘 · 结缘入口 ---------------- */
+.starview__actions { display: flex; gap: 12px; width: 100%; }
+.starview__actions .btn { flex: 1; }
+
+/* ---------------- 结缘弹层 ---------------- */
+.karma {
+  width: 100%;
+  max-width: 440px;
+  max-height: 92dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: pop 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+.karma__scroll {
+  overflow-y: auto;
+  background: var(--paper);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(44, 44, 44, 0.3);
+  padding: 22px 20px;
+}
+.karma__bar { display: flex; gap: 12px; }
+.karma__bar .btn { flex: 1; }
+
+.karma__seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--seal);
+  color: #fff;
+  border-radius: 5px;
+  font-family: var(--kai);
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 10px;
+  transform: rotate(-5deg);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.28);
+}
+.karma__title { font-size: 26px; font-weight: 400; letter-spacing: 0.12em; margin-top: 12px; }
+.karma__sub { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.7; }
+.karma__hint { color: var(--muted); font-size: 11.5px; margin-top: 14px; text-align: center; letter-spacing: 0.03em; }
+
+/* ---------------- 生辰帖 ---------------- */
+.birthform { display: flex; flex-direction: column; }
+.birthform .karma__title { text-align: center; }
+.birthform .karma__sub { text-align: center; }
+.birthform .karma__seal { align-self: center; }
+.birthform__fields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 22px; }
+.birthform__field { display: flex; flex-direction: column; gap: 6px; }
+.birthform__field--wide { grid-column: 1 / -1; }
+.birthform__label { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+.birthform__field select {
+  appearance: none;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 11px 8px;
+  font-family: var(--serif);
+  font-size: 15px;
+  color: var(--ink);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.birthform__field select:hover { border-color: var(--muted); }
+.birthform__submit { margin-top: 22px; width: 100%; }
+
+/* ---------------- 结缘结果 ---------------- */
+.karma-result { display: flex; flex-direction: column; gap: 18px; }
+.karma-result__ring { display: flex; justify-content: center; }
+.karma-result__ring .bracelet { width: 250px; height: 250px; }
+.karma-result__name { text-align: center; }
+.karma-result__name .karma__title { margin-top: 10px; }
+.karma-badges { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+
+/* ---------------- 手串 SVG ---------------- */
+.bracelet { display: block; }
+.bracelet-center { fill: var(--crab); font-family: var(--kai); font-size: 14px; letter-spacing: 2px; }
+.bracelet-halo {
+  fill: var(--gold);
+  opacity: 0;
+  filter: blur(12px);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: karma-halo 2.4s ease-out forwards;
+}
+@keyframes karma-halo {
+  0% { opacity: 0; transform: scale(0.5); }
+  30% { opacity: 0.28; }
+  100% { opacity: 0.14; transform: scale(1); }
+}
+.bracelet-string {
+  stroke: #C9BFA8;
+  stroke-width: 2.2;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: draw 1.5s ease forwards;
+  animation-delay: 0.5s;
+}
+.bracelet-string--static { stroke-dasharray: none; stroke-dashoffset: 0; animation: none; }
+.bead {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: bead-in 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.3) forwards;
+  animation-delay: calc(0.9s + var(--i, 0) * 90ms);
+}
+.bead--static { opacity: 1; animation: none; }
+.bead__body { stroke: rgba(0, 0, 0, 0.12); stroke-width: 0.7; }
+@keyframes bead-in {
+  from { opacity: 0; transform: scale(0.3); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ---------------- 三段解读 ---------------- */
+.readings { display: flex; flex-direction: column; gap: 12px; }
+.reading {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.reading--karma {
+  border-left: 3px solid var(--gold);
+  background: linear-gradient(180deg, #fffdf9 0%, #f7f1e4 100%);
+}
+.reading__head {
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  display: block;
+  margin-bottom: 8px;
+}
+.reading__head::before { content: '❯ '; color: var(--seal); }
+.reading__text { font-size: 13px; line-height: 1.95; color: var(--ink-soft); font-family: var(--kai); }
+
+/* ---------------- 配方单 ---------------- */
+.recipe {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+.recipe__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.recipe__head h4 { font-size: 15px; font-weight: 400; letter-spacing: 0.1em; }
+.recipe__hint { font-size: 11px; color: var(--muted); }
+.recipe__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.recipe__item:last-child { border-bottom: none; }
+.recipe__dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+}
+.recipe__stone { font-size: 14px; }
+.recipe__elem { font-size: 12px; }
+.recipe__role { font-size: 11.5px; color: var(--muted); margin-left: auto; }
+.recipe__count { font-size: 13px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+
+/* ---------------- 联动码 ---------------- */
+.linkcode {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+.linkcode__head h4 { font-size: 15px; font-weight: 400; letter-spacing: 0.1em; margin-bottom: 4px; }
+.linkcode__row { display: flex; gap: 10px; margin-top: 12px; }
+.linkcode__input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font-family: var(--serif);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper);
+}
+.linkcode__input:focus { outline: none; border-color: var(--gold); }
+.linkcode__note { margin-top: 10px; font-size: 12.5px; color: #8a6d33; font-family: var(--kai); }
+
+/* ---------------- 线下转化 ---------------- */
+.made {
+  background: linear-gradient(180deg, #fffdf9 0%, #f7f1e4 100%);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.made__text h4 { font-size: 15px; font-weight: 400; letter-spacing: 0.08em; margin-bottom: 8px; }
+.made__text p { font-size: 12.5px; line-height: 1.8; color: var(--ink-soft); }
+
+/* ---------------- 弹层层级 ---------------- */
+.overlay--top { z-index: 110; }

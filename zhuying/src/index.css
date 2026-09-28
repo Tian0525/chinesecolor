@@ -1,0 +1,70 @@
+:root {
+  /* 东方新中式 · 深棕烛光调 */
+  --bg: #22150d;            /* 深棕底 */
+  --bg-2: #2c1b10;          /* 次级底 */
+  --panel: #3a2314;         /* 面板 */
+  --panel-2: #452a17;       /* 面板高亮 */
+  --line: #5a3a22;          /* 描边 */
+  --line-soft: rgba(224, 122, 58, 0.28);
+
+  --orange: #e07a3a;        /* 暖橙 · 主色 */
+  --amber: #c89b3c;         /* 琥珀金 · 辅色 */
+  --paper: #f2efe9;         /* 磨砂白 · 留白 */
+  --ink: #1a1a1a;           /* 哑光黑 */
+  --text: #f4eadb;          /* 正文 */
+  --muted: #c3ab8f;         /* 次级文字 */
+  --faint: #8a7358;         /* 更弱文字 */
+
+  --serif: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong",
+    "SimSun", serif;
+  --kai: "Kaiti SC", "STKaiti", "KaiTi", "FangSong", "STFangsong", serif;
+
+  font-family: var(--serif);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  touch-action: manipulation;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+::selection {
+  background: var(--orange);
+  color: #1a0f07;
+}
